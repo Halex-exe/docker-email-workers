@@ -4,15 +4,16 @@ volumes:
 networks:
   banco:
   web:
+  fila:
 services:
   db:
     environment:
       - POSTGRES_HOST_AUTH_METHOD=trust
     image: postgres:9.6
     volumes:
-      #Volume of data:
+      # Volume of data:
       - dados:/var/lib/postgresql/data
-      #Scripts:
+      # Scripts:
       - ./scripts:/scripts 
       - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
@@ -40,5 +41,22 @@ services:
     networks:
       - banco
       - web
+      - fila
     depends_on:
       - db
+      - queue
+  queue:
+    image: redis:3.2
+    networks: 
+    - fila
+  worker:
+    image: python:3.6
+    volumes:
+      # Worker
+      - ./worker:/worker
+    working_dir: /worker
+    command: bash ./app.sh
+    networks:
+      - fila
+    depends_on:
+      - queue
