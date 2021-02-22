@@ -13,4 +13,4 @@ if __name__ == '__main__':
         # E-mail send simulation
         print('Send a message', message['subject'])
         sleep(randint(15, 45))
-        print('Message', message['subject'], 'enviada')
+        print('Message', message['subject'], 'send!')
